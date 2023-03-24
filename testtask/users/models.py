@@ -9,6 +9,13 @@ class Car(models.Model):
     color = models.CharField(max_length=50)
     owners = models.ManyToManyField('CustomUser', through='Ownership')
 
+    def __str__(self):
+        return f"{self.make} {self.model} {self.year}"
+
+    class Meta:
+        verbose_name = "Car"
+        verbose_name_plural = "Cars"
+
 
 class CustomUser(AbstractUser):
     username = models.CharField(db_index=True, max_length=255, unique=True)
@@ -25,8 +32,8 @@ class CustomUser(AbstractUser):
         return self.email
 
     class Meta:
-        related_name = "User"
-        related_name_plural = "Users"
+        verbose_name = "User"
+        verbose_name_plural = "Users"
 
 
 class Ownership(models.Model):
