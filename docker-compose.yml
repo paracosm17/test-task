@@ -1,7 +1,8 @@
-version: '3.8'
+version: '3'
+
 services:
    web:
        build: .
-       command: python manage.py runserver localhost:8000
+       command: python testtask/manage.py runserver localhost:8000
        ports:
            - 8000:8000
