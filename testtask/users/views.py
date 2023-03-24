@@ -14,6 +14,9 @@ User = get_user_model()
 
 
 class UserRegisterationAPIView(GenericAPIView):
+    """
+    Used to register new users. After successful registration, you can get a jwt token
+    """
     permission_classes = (AllowAny,)
     serializer_class = CustomUserRegisterationSerializer
 
@@ -28,6 +31,9 @@ class UserRegisterationAPIView(GenericAPIView):
 
 
 class UserLoginAPIView(GenericAPIView):
+    """
+    Used to log in to your account. After successfully logging in, you can get a jwt token
+    """
     permission_classes = (AllowAny,)
     serializer_class = CustomUserLoginSerializer
 
@@ -43,6 +49,9 @@ class UserLoginAPIView(GenericAPIView):
 
 
 class UserLogoutAPIView(GenericAPIView):
+    """
+    Used to log out of the account
+    """
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -56,6 +65,9 @@ class UserLogoutAPIView(GenericAPIView):
 
 
 class UserAPIView(RetrieveUpdateAPIView):
+    """
+    Used to get information about the current account. A jwt token is required
+    """
     permission_classes = (IsAuthenticated,)
     serializer_class = CustomUserSerializer
 
@@ -64,15 +76,24 @@ class UserAPIView(RetrieveUpdateAPIView):
 
 
 class CarApi(APIView):
+    """
+    Cars API
+    """
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
+        """
+        Used to get a list of the user's cars
+        """
         user_id = request.user.id
         all_cars = Car.objects.filter(owner__id=user_id)
         serialized_all_cars = CarSerializer(all_cars, context={"request": request}, many=True)
         return Response(serialized_all_cars.data)
 
     def post(self, request):
+        """
+        Used to add a new car for the user
+        """
         car = request.data
         user_id = request.user.id
         car['owner'] = user_id
@@ -80,23 +101,3 @@ class CarApi(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response({"status": 200})
-
-
-class CustomUserUpdate(UpdateAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserProfileSerializer
-
-    def update(self, request, *args, **kwargs):
-        instance = CustomUser.objects.get(id=request.user.id)
-        country = request.data.get("country")
-        first_name = request.data.get("first_name")
-        last_name = request.data.get("last_name")
-        if country:
-            instance.country = country
-        if first_name:
-            instance.first_name = first_name
-        if last_name:
-            instance.last_name = last_name
-        instance.save()
-        return Response({'status': 200})
