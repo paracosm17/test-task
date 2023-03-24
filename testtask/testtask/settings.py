@@ -141,3 +141,5 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer", "jwt", "JWT"),
 
 }
+
+AUTH_USER_MODEL = 'users.CustomUser'
