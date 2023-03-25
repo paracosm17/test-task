@@ -1,12 +1,11 @@
-FROM python:3.10-alpine
+FROM python:3.10.6-alpine
 
-WORKDIR /project
+RUN pip install --upgrade pip
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-		PYTHONUNBUFFERED=1
+RUN pip install -r requirements.txt
 
-COPY . .
+COPY . /app
 
-RUN apk add --update --no-cache --virtual .tmp-build-deps \
-				gcc libc-dev linux-headers && \
-		pip install --no-cache-dir -r requirements.txt
+WORKDIR /app
+
+RUN gunicorn testtask.wsgi:application --bind 0.0.0.0:8000
