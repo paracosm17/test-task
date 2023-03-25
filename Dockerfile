@@ -1,5 +1,12 @@
-FROM python:3.9.12-slim
-WORKDIR /testtask/
+FROM python:3.10-alpine
+
+WORKDIR /project
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+		PYTHONUNBUFFERED=1
+
 COPY . .
-RUN python3 -m pip install --no-cache-dir --no-warn-script-location --upgrade pip \
-    && python3 -m pip install --no-cache-dir --no-warn-script-location --user -r requirements.txt
+
+RUN apk add --update --no-cache --virtual .tmp-build-deps \
+				gcc libc-dev linux-headers && \
+		pip install --no-cache-dir -r requirements.txt

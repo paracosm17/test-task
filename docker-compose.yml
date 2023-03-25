@@ -1,8 +1,21 @@
-version: '3'
+version: '3.9'
 
 services:
-   web:
-       build: .
-       command: python testtask/manage.py runserver localhost:8000
-       ports:
-           - 8000:8000
+  django:
+    build: ./project
+    command: sh -c "gunicorn --bind 0.0.0.0:8000 testtask.wsgi"
+    volumes:
+      - ./project:/project
+      - static_data:/project/static
+    expose:
+      - 8000
+
+  nginx:
+    image: nginx:1.19.8-alpine
+    depends_on:
+      - django
+    ports:
+      - "80:80"
+    volumes:
+      - static_data:/root/testtask/static
+      - ./nginx-conf.d:/etc/nginx/conf.d
