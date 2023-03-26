@@ -65,4 +65,4 @@ venv.bak/
 
 # Django
 *.sqlite3
-.static/
+static/
